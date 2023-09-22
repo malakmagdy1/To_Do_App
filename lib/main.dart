@@ -1,7 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do/layout/home_layout.dart';
+import 'package:to_do/module/loading.dart';
 import 'package:to_do/module/settings/setting_providar.dart';
 import 'package:to_do/module/splash/splash.dart';
 
@@ -15,6 +18,7 @@ void main() async {
   );
   runApp(ChangeNotifierProvider(
       child: const MyApp(), create: (context) => SettingProvider()));
+  loading();
 }
 
 class MyApp extends StatelessWidget {
@@ -25,6 +29,7 @@ class MyApp extends StatelessWidget {
     var providar = Provider.of<SettingProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
       //theme:ThemeData.light(),
       themeMode: providar.themeMode,
       initialRoute: splash.routeName,
@@ -32,6 +37,7 @@ class MyApp extends StatelessWidget {
         splash.routeName: (context) => splash(),
         HomeLayoutView.routeName: (context) => const HomeLayoutView(),
       },
+      builder: EasyLoading.init(builder: BotToastInit()),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do/module/TaskModel.dart';
 import 'package:to_do/module/settings/setting_view.dart';
@@ -22,8 +23,8 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
   var descriptionController = TextEditingController();
   int selectedIndex = 0;
   List<Widget> screens = [
-    const TasksListView(),
-    const SettingView(),
+    TasksListView(),
+    SettingView(),
   ];
 
   @override
@@ -62,7 +63,10 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
               side: BorderSide(
                   color: provider.isDark() ? Colors.black : Colors.white,
                   width: 2)),
-          child: Icon(Icons.add),
+          child: Icon(
+            Icons.add,
+            color: provider.isDark() ? Colors.black : Colors.white,
+          ),
         ),
         bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),
@@ -80,10 +84,10 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
             selectedItemColor: provider.isDark()
                 ? AppTheme.darkTheme.bottomNavigationBarTheme.selectedItemColor
                 : AppTheme
-                .lightTheme.bottomNavigationBarTheme.selectedItemColor,
+                    .lightTheme.bottomNavigationBarTheme.selectedItemColor,
             unselectedItemColor: provider.isDark()
                 ? AppTheme
-                .darkTheme.bottomNavigationBarTheme.unselectedItemColor
+                    .darkTheme.bottomNavigationBarTheme.unselectedItemColor
                 : AppTheme
                     .lightTheme.bottomNavigationBarTheme.unselectedItemColor,
             items: const [
@@ -96,21 +100,36 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
   }
 
   OpenTaskSheet() {
+    var provider = Provider.of<SettingProvider>(context,
+        listen: false); //add his line to appear
     showModalBottomSheet(
       context: context,
+      backgroundColor: provider.isDark()
+          ? AppTheme.darkTheme.canvasColor
+          : AppTheme.lightTheme.bottomSheetTheme.backgroundColor,
       builder: (context) {
         return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          )),
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
               Text(
                 "Add New Task",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              SizedBox(
+                height: 30,
               ),
               TextFormField(
                 controller: titleController,
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: "Task name",
+                  labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(color: Colors.white),
@@ -120,11 +139,16 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                     borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
+              ),
+              SizedBox(
+                height: 30,
               ),
               TextFormField(
                 controller: descriptionController,
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: "Task Description",
+                  labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(color: Colors.white),
@@ -135,21 +159,64 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                   ),
                 ),
               ),
+              Spacer(),
               OutlinedButton(
-                  onPressed: () {
-                    TaskModel taskModal = TaskModel(
-                        title: titleController.text,
-                        description: descriptionController.text,
-                        isDone: false);
-                    FirebaseFunctions.addTask(taskModal).then((value) {
-                      Navigator.pop(context);
-                    });
-                  },
-                  child: Text("Add Task"))
+                onPressed: () {
+                  // if (descriptionController == null) {}
+                  // ;
+                  // if (titleController == null) {}
+                  // ;
+                  TaskModel taskModal = TaskModel(
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      isDone: false);
+                  EasyLoading.show();
+                  FirebaseFunctions.addTask(taskModal).then((value) {
+                    //or remove .then and write await to handle future or try catch
+                    EasyLoading.dismiss();
+                    Navigator.pop(context);
+                    showToast();
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    "Add Task",
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                    side: BorderSide(width: 2.0, color: Colors.white)),
+              ),
             ],
           ),
         );
       },
     );
+  }
+
+//   void showToast()=>Fluttertoast.showToast(
+// msg:"  Added Successfully  ",
+//     gravity:ToastGravity.TOP,
+//     toastLength: Toast.LENGTH_LONG
+//
+// //   );
+  void showToast() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Added Succsesfully",
+          style: TextStyle(fontSize: 25),
+        ),
+        backgroundColor: Colors.green));
+  }
+
+  void showToastFailed() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        " Failed ",
+        style: TextStyle(fontSize: 25),
+      ),
+      backgroundColor: Colors.red,
+    ));
   }
 }

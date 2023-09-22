@@ -19,8 +19,23 @@ class FirebaseFunctions {
   // value(eeh eltask b2a) data enter in firebase
   static Future<void> addTask(TaskModel taskModel) {
     var collection = getTaskCollection();
-    var docRef = collection.doc(); //.add .delete
-    taskModel.id = docRef.id;
-    return docRef.set(taskModel);
+    var doc = collection.doc(); //.add .delete
+    taskModel.id = doc.id;
+    return doc.set(taskModel);
+  }
+
+  static Future<List<TaskModel>> getData() async {
+    var snapshots = await getTaskCollection().get();
+    List<TaskModel> taskslist = snapshots.docs.map((e) => e.data()).toList();
+    return taskslist;
+  }
+
+  static Stream<QuerySnapshot<TaskModel>> getRealTimeData() {
+    return getTaskCollection().snapshots();
+  }
+
+  static Future<void> deleteTask(TaskModel taskModel) {
+    var collection = getTaskCollection().doc(taskModel.id);
+    return collection.delete();
   }
 }
