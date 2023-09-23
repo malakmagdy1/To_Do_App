@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:to_do/layout/home_layout.dart';
-import 'package:to_do/module/settings/setting_providar.dart';
-import 'package:to_do/module/splash/splash.dart';
+import 'package:to_do/screen/homelayout.dart';
+import 'package:to_do/screen/splash.dart';
+import 'package:to_do/theme/my_theme.dart';
 
 import 'firebase_options.dart';
 
@@ -11,8 +10,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(ChangeNotifierProvider(
-      child: const MyApp(), create: (context) => SettingProvider()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,15 +18,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var providar = Provider.of<SettingProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //theme:ThemeData.light(),
-      themeMode: providar.themeMode,
-      initialRoute: splash.routeName,
+      theme: MyTheme.lightTheme,
+      initialRoute: Splash.routeName,
       routes: {
-        splash.routeName: (context) => splash(),
-        HomeLayoutView.routeName: (context) => const HomeLayoutView(),
+        Splash.routeName: (context) => Splash(),
+        HomeLayout.routeName: (context) => HomeLayout(),
       },
     );
   }
