@@ -40,3 +40,24 @@ class ThemeBottomSheet extends StatelessWidget {
     );
   }
 }
+
+class ThemeBottomSheetTwo extends StatelessWidget {
+  const ThemeBottomSheetTwo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // var mediaQuery=MediaQuery.of(context).size;
+    var providar = Provider.of<SettingProvider>(context);
+    return Container(
+      color: providar.isDark()
+          ? AppTheme.darkTheme.bottomSheetTheme.backgroundColor
+          : AppTheme.lightTheme.bottomSheetTheme.backgroundColor,
+      child: Column(
+        children: [
+          InkWell(onTap: () {}, child: Text("English")),
+          InkWell(onTap: () {}, child: Text("Arabic")),
+        ],
+      ),
+    );
+  }
+}

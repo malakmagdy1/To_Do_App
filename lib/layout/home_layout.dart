@@ -19,6 +19,7 @@ class HomeLayoutView extends StatefulWidget {
 }
 
 class _HomeLayoutViewState extends State<HomeLayoutView> {
+  final formKey = GlobalKey<FormState>();
   var titleController = TextEditingController();
   var descriptionController = TextEditingController();
   int selectedIndex = 0;
@@ -32,7 +33,7 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
     var provider = Provider.of<SettingProvider>(context);
     var mediaQuery = MediaQuery.of(context).size;
     Color scaffoldBackgroundColor =
-        provider.isDark() ? Colors.black : Colors.white;
+    provider.isDark() ? Colors.black : Colors.white;
     return Scaffold(
         backgroundColor: scaffoldBackgroundColor,
         //provider.isDark() ? Colors.deepOrange : Colors.white,
@@ -84,12 +85,12 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
             selectedItemColor: provider.isDark()
                 ? AppTheme.darkTheme.bottomNavigationBarTheme.selectedItemColor
                 : AppTheme
-                    .lightTheme.bottomNavigationBarTheme.selectedItemColor,
+                .lightTheme.bottomNavigationBarTheme.selectedItemColor,
             unselectedItemColor: provider.isDark()
                 ? AppTheme
-                    .darkTheme.bottomNavigationBarTheme.unselectedItemColor
+                .darkTheme.bottomNavigationBarTheme.unselectedItemColor
                 : AppTheme
-                    .lightTheme.bottomNavigationBarTheme.unselectedItemColor,
+                .lightTheme.bottomNavigationBarTheme.unselectedItemColor,
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.menu), label: "menu"),
               BottomNavigationBarItem(
@@ -108,87 +109,127 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
           ? AppTheme.darkTheme.canvasColor
           : AppTheme.lightTheme.bottomSheetTheme.backgroundColor,
       builder: (context) {
-        return Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          )),
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Text(
-                "Add New Task",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: titleController,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Task name",
-                  labelStyle: TextStyle(color: Colors.white),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.white),
+        return Form(
+          key: formKey,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            )),
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Text(
+                  "Add New Task",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                  validator: (String? titleController) {
+                    if (titleController!.isEmpty) {
+                      return "enter task title";
+                    } else
+                      return null;
+                  },
+                  controller: titleController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: "Task name",
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: descriptionController,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Task Description",
-                  labelStyle: TextStyle(color: Colors.white),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Colors.white),
+                SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                  validator: (String? descriptionController) {
+                    if (descriptionController!.isEmpty) {
+                      return "enter task description";
+                    } else
+                      return null;
+                  },
+                  controller: descriptionController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: "Task Description",
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              Spacer(),
-              OutlinedButton(
-                onPressed: () {
-                  // if (descriptionController == null) {}
-                  // ;
-                  // if (titleController == null) {}
-                  // ;
-                  TaskModel taskModal = TaskModel(
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      isDone: false);
-                  EasyLoading.show();
-                  FirebaseFunctions.addTask(taskModal).then((value) {
-                    //or remove .then and write await to handle future or try catch
-                    EasyLoading.dismiss();
-                    Navigator.pop(context);
-                    showToast();
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    "Add Task",
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                Container(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        "Select date",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )),
+                InkWell(
+                    onTap: () {
+                      showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 356)));
+                    },
+                    child: Text(
+                      "6/5/2023",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    )),
+                Spacer(),
+                OutlinedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      TaskModel taskModal = TaskModel(
+                          title: titleController.text,
+                          description: descriptionController.text,
+                          isDone: false);
+                      EasyLoading.show();
+                      FirebaseFunctions.addTask(taskModal).then((value) {
+                        //or remove .then and write await to handle future or try catch
+                        EasyLoading.dismiss();
+                        Navigator.pop(context);
+                        showToast();
+                      });
+                    } else {
+                      return showToast();
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text(
+                      "Add Task",
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
                   ),
+                  style: OutlinedButton.styleFrom(
+                      side: BorderSide(width: 2.0, color: Colors.white)),
                 ),
-                style: OutlinedButton.styleFrom(
-                    side: BorderSide(width: 2.0, color: Colors.white)),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

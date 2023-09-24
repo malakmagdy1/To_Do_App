@@ -24,12 +24,13 @@ class TaskIteamWidget extends StatelessWidget {
     var mediaQuery = MediaQuery.of(context).size;
     return Slidable(
       startActionPane: ActionPane(
-        extentRatio: 0.2,
-        motion: const ScrollMotion(),
+        extentRatio: 0.15,
+        motion: BehindMotion(),
         dismissible: DismissiblePane(onDismissed: () {}),
         children: [
           SlidableAction(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15), bottomLeft: Radius.circular(15)),
             onPressed: (context) {
               FirebaseFunctions.deleteTask(taskmodel);
             },
@@ -37,6 +38,16 @@ class TaskIteamWidget extends StatelessWidget {
             foregroundColor: Colors.white,
             icon: Icons.delete,
             label: 'Delete',
+          ),
+          SlidableAction(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15),
+                bottomRight: Radius.circular(15)),
+            onPressed: (context) {},
+            backgroundColor: Colors.blueAccent,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: 'Edit',
           ),
         ],
       ),
@@ -46,7 +57,6 @@ class TaskIteamWidget extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               color: const Color(0x6BBEB5B6)),
-          // width: mediaQuery.width * (0.3),
           height: mediaQuery.height * (0.13),
           child: Row(
             children: [

@@ -32,8 +32,8 @@ class _TasksListViewState extends State<TasksListView> {
         ),
         CalendarTimeline(
           initialDate: DateTime.now(),
-          firstDate: DateTime.now().subtract(const Duration(days: 30)),
-          lastDate: DateTime.now().add(const Duration(days: 365)),
+          firstDate: DateTime.now().subtract(const Duration(days: 10000)),
+          lastDate: DateTime.now().add(const Duration(days: 1000)),
           onDateSelected: (date) => print(date),
           leftMargin: 20,
           monthColor: provider.isDark() ? Colors.white : Colors.black,
@@ -61,8 +61,8 @@ class _TasksListViewState extends State<TasksListView> {
               child: ListView.builder(
                 itemBuilder: (context, index) => TaskIteamWidget(
                   taskmodel: taskList![index],
-                  title: taskList?[index].title ?? "",
-                  description: taskList?[index].description ?? "",
+                  title: taskList[index].title ?? "",
+                  description: taskList[index].description ?? "",
                 ),
                 itemCount: taskList?.length ?? 0,
               ),
