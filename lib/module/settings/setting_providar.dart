@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class SettingProvider extends ChangeNotifier {
   ThemeMode themeMode = ThemeMode.light;
+  String currentLang = "en";
 
   enableDarkTheme() {
     themeMode = ThemeMode.dark;
@@ -15,5 +16,11 @@ class SettingProvider extends ChangeNotifier {
 
   bool isDark() {
     return themeMode == ThemeMode.dark;
+  }
+
+  changeLang(String newLang) {
+    if (currentLang == newLang) return;
+    currentLang = newLang;
+    notifyListeners();
   }
 }

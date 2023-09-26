@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do/module/settings/setting_providar.dart';
 import 'package:to_do/tasks_list/widgts/ThemeBottomSheet.dart';
-
 class SettingView extends StatelessWidget {
   const SettingView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var applocale = AppLocalizations.of(context);
     var provider = Provider.of<SettingProvider>(context);
     var mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
@@ -33,7 +34,7 @@ class SettingView extends StatelessWidget {
                         context: context,
                         builder: (context) => ThemeBottomSheet());
                   },
-                  child: Text("Mode",
+                  child: Text(applocale!.mode,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -60,7 +61,7 @@ class SettingView extends StatelessWidget {
                         context: context,
                         builder: (context) => ThemeBottomSheetTwo());
                   },
-                  child: Text("Language",
+                  child: Text(applocale!.language,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

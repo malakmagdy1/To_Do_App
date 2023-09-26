@@ -54,8 +54,26 @@ class ThemeBottomSheetTwo extends StatelessWidget {
           : AppTheme.lightTheme.bottomSheetTheme.backgroundColor,
       child: Column(
         children: [
-          InkWell(onTap: () {}, child: Text("English")),
-          InkWell(onTap: () {}, child: Text("Arabic")),
+          InkWell(
+            onTap: () {
+              providar.changeLang("en");
+            },
+            child: providar.currentLang == "en"
+                ? SelectedIteam(
+                    "English",
+                  )
+                : UnSelectedIteam("English"),
+          ),
+          InkWell(
+            onTap: () {
+              providar.changeLang("ar");
+            },
+            child: providar.currentLang == "ar"
+                ? SelectedIteam(
+                    "Arabic",
+                  )
+                : UnSelectedIteam("Arabic"),
+          ),
         ],
       ),
     );

@@ -32,11 +32,9 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,
-
-      //theme:ThemeData.light(),
       themeMode: providar.themeMode,
       initialRoute: splash.routeName,
-      locale: Locale("en"),
+      locale: Locale(providar.currentLang),
       routes: {
         splash.routeName: (context) => splash(),
         HomeLayoutView.routeName: (context) => const HomeLayoutView(),
