@@ -3,9 +3,10 @@ import 'package:to_do/module/TaskModel.dart';
 
 class FirebaseFunctions {
   static CollectionReference<TaskModel> getTaskCollection() {
-    return FirebaseFirestore.instance
-        .collection("Tasks")
+    return FirebaseFirestore.instance //take instance from collection
+        .collection("Tasks") //collecion name
         .withConverter<TaskModel>(fromFirestore: (snapshot, _) {
+      //snapshot map hold data in fromfirebase
       return TaskModel.fromJson(snapshot.data()!);
     }, toFirestore: (value, _) {
       return value.toJson();
@@ -17,17 +18,19 @@ class FirebaseFunctions {
   // field (date,title,description)
   // type(string,int)
   // value(eeh eltask b2a) data enter in firebase
+
   static Future<void> addTask(TaskModel taskModel) {
     var collection = getTaskCollection();
     var doc = collection.doc(); //.add .delete
     taskModel.id = doc.id;
-    return doc.set(taskModel);
+    return collection.add(taskModel);
   }
 
-  static Future<List<TaskModel>> getData() async {
-    var snapshots = await getTaskCollection().get();
-    List<TaskModel> taskslist = snapshots.docs.map((e) => e.data()).toList();
-    return taskslist;
+  static Stream<QuerySnapshot<TaskModel>> getData(DateTime dateTime) {
+    var collection = getTaskCollection();
+    return collection
+        .where("date", isEqualTo: dateTime.millisecondsSinceEpoch)
+        .snapshots();
   }
 
   static Stream<QuerySnapshot<TaskModel>> getRealTimeData() {
@@ -35,7 +38,8 @@ class FirebaseFunctions {
   }
 
   static Future<void> deleteTask(TaskModel taskModel) {
-    var collection = getTaskCollection().doc(taskModel.id);
-    return collection.delete();
+    var collection = getTaskCollection();
+    var doc = collection.doc(taskModel.id);
+    return doc.delete();
   }
 }

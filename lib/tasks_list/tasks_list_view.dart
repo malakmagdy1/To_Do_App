@@ -14,6 +14,7 @@ class TasksListView extends StatefulWidget {
 
 class _TasksListViewState extends State<TasksListView> {
   List<TaskModel> allTasks = [];
+  DateTime selectedDate = DateUtils.dateOnly(DateTime.now());
 
   @override
   // void initState() {
@@ -32,9 +33,11 @@ class _TasksListViewState extends State<TasksListView> {
         ),
         CalendarTimeline(
           initialDate: DateTime.now(),
-          firstDate: DateTime.now().subtract(const Duration(days: 10000)),
-          lastDate: DateTime.now().add(const Duration(days: 1000)),
-          onDateSelected: (date) => print(date),
+          firstDate: DateTime.now().subtract(Duration(days: 365)),
+          lastDate: DateTime.now().add(Duration(days: 365)),
+          onDateSelected: (date) {
+            selectedDate = DateUtils.dateOnly(date);
+          },
           leftMargin: 20,
           monthColor: provider.isDark() ? Colors.white : Colors.black,
           dayColor: provider.isDark() ? Colors.white : Colors.black,
@@ -56,38 +59,43 @@ class _TasksListViewState extends State<TasksListView> {
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             }
-            var taskList = snapshot.data?.docs.map((e) => e.data()).toList();
+            List<TaskModel> tasksList =
+                snapshot.data?.docs.map((e) => e.data()).toList() ?? [];
+
             return Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) => TaskIteamWidget(
-                  taskmodel: taskList![index],
-                  title: taskList[index].title ?? "",
-                  description: taskList[index].description ?? "",
-                ),
-                itemCount: taskList?.length ?? 0,
-              ),
-            );
+                child: ListView.builder(
+              itemBuilder: (context, index) =>
+                  TaskIteamWidget(tasksList[index]),
+              itemCount: tasksList.length,
+            ));
+            // var taskList = snapshot.data? .docs.map((e) => e.data()).toList();
+            // return Column(
+            //   children: [
+            //     Expanded(
+            //       child: ListView.builder(
+            //         itemBuilder: (context, index) => TaskIteamWidget(
+            //           taskmodel: taskList![index],
+            //           title: taskList[index].title ?? "",
+            //           description: taskList[index].description ?? " ",
+            //         ),
+            //         itemCount: taskList?.length ?? 0,
+            //       ),
+            //     ),
+            //   ],
+            // );
           },
         ),
-        // FutureBuilder(
-        //   future: FirebaseFunctions.getData(),
-        //   builder: (context, snapshot){
-        //     if (snapshot.hasError) {
-        //       return Text("Error");
-        //     } else if (snapshot.connectionState == ConnectionState.waiting) {
-        //     return CircularProgressIndicator();}
-        //     return taskmodel=snapshot.data?.data();
-        //
-        //   },
+        //       FutureBuilder(
+        //         future: FirebaseFunctions.getData(selectedDate),
+        //         builder: (context, snapshot) {
+        //           if (snapshot.hasError) {
+        //             return Text("Error..........");
+        //           } else if (snapshot.connectionState == ConnectionState.waiting) {
+        //             return CircularProgressIndicator();
+        //           }
+
+        //        },
         // ),
-        // Expanded(
-        //   child: ListView.builder(
-        //     itemBuilder: (context, index) => TaskIteamWidget(
-        //       title: allTasks[index].title!,
-        //       description: allTasks[index].description!,
-        //     ),
-        //   ),
-        // )
       ],
     );
   }

@@ -6,25 +6,25 @@ import 'package:to_do/core/data_base/firebase_funcions.dart';
 import '../../module/TaskModel.dart';
 import '../../module/settings/setting_providar.dart';
 
-class TaskIteamWidget extends StatelessWidget {
-  final String title;
-  final String description;
-  final TaskModel taskmodel;
+class TaskIteamWidget extends StatefulWidget {
+  // String? title;
+  // String? description;
+  TaskModel? taskmodel;
 
-  TaskIteamWidget({
-    Key? key, // Replace super.key with Key
-    required this.description,
-    required this.title,
-    required this.taskmodel,
-  }) : super(key: key);
+  TaskIteamWidget(this.taskmodel);
 
+  @override
+  State<TaskIteamWidget> createState() => _TaskIteamWidgetState();
+}
+
+class _TaskIteamWidgetState extends State<TaskIteamWidget> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<SettingProvider>(context);
     var mediaQuery = MediaQuery.of(context).size;
     return Slidable(
       startActionPane: ActionPane(
-        extentRatio: 0.15,
+        extentRatio: 0.40,
         motion: BehindMotion(),
         dismissible: DismissiblePane(onDismissed: () {}),
         children: [
@@ -32,7 +32,7 @@ class TaskIteamWidget extends StatelessWidget {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(15), bottomLeft: Radius.circular(15)),
             onPressed: (context) {
-              FirebaseFunctions.deleteTask(taskmodel);
+              FirebaseFunctions.deleteTask(widget.taskmodel!.id as TaskModel);
             },
             backgroundColor: Color(0xFFFE4A49),
             foregroundColor: Colors.white,
@@ -77,16 +77,24 @@ class TaskIteamWidget extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(title),
+                  Text(
+                    widget.taskmodel!.title,
+                  ),
                   SizedBox(
                     height: 10,
                   ),
-                  Text(description),
+                  Text(widget.taskmodel!.description),
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.access_time_rounded,
-                      size: 20,
+                    child: Row(
+                      children: [
+                        Text(
+                            widget.taskmodel!.date.toString().substring(0, 10)),
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 20,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -100,7 +108,14 @@ class TaskIteamWidget extends StatelessWidget {
                         ? Color(0xFF4851E5)
                         : Color(0xFF823F8D),
                     borderRadius: BorderRadius.circular(14)),
-                child: Icon(Icons.check, size: 40, color: Colors.white),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.check,
+                    size: 40,
+                    color: Colors.white,
+                  ),
+                ),
               ),
               SizedBox(
                 width: 10,

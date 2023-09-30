@@ -8,7 +8,7 @@ import 'package:to_do/tasks_list/tasks_list_view.dart';
 import '../core/data_base/firebase_funcions.dart';
 import '../core/theme/my_theme.dart';
 import '../module/settings/setting_providar.dart';
-
+/////////////////////////////////
 class HomeLayoutView extends StatefulWidget {
   static const String routeName = "home";
 
@@ -102,7 +102,7 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
 
   OpenTaskSheet() {
     var provider = Provider.of<SettingProvider>(context,
-        listen: false); //add his line to appear
+        listen: false); //add this line to appear
     showModalBottomSheet(
       context: context,
       backgroundColor: provider.isDark()
@@ -129,7 +129,7 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                 ),
                 TextFormField(
                   validator: (String? titleController) {
-                    if (titleController!.isEmpty) {
+                    if (titleController!.trim().isEmpty) {
                       return "enter task title";
                     } else
                       return null;
@@ -154,7 +154,7 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                 ),
                 TextFormField(
                   validator: (String? descriptionController) {
-                    if (descriptionController!.isEmpty) {
+                    if (descriptionController!.trim().isEmpty) {
                       return "enter task description";
                     } else
                       return null;
@@ -179,7 +179,7 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Text(
-                        "Select date",
+                        "Selected date",
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -188,15 +188,10 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                     )),
                 InkWell(
                     onTap: () {
-                      showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate:
-                              DateTime.now().add(const Duration(days: 356)));
+                      DatePicker();
                     },
                     child: Text(
-                      "6/5/2023",
+                      selectedDate.toString().substring(0, 10),
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     )),
                 Spacer(),
@@ -206,7 +201,8 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                       TaskModel taskModal = TaskModel(
                           title: titleController.text,
                           description: descriptionController.text,
-                          isDone: false);
+                          isDone: false,
+                          date: selectedDate);
                       EasyLoading.show();
                       FirebaseFunctions.addTask(taskModal).then((value) {
                         //or remove .then and write await to handle future or try catch
@@ -215,7 +211,7 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
                         showToast();
                       });
                     } else {
-                      return showToast();
+                      return showToastFailed();
                     }
                   },
                   child: Padding(
@@ -236,12 +232,20 @@ class _HomeLayoutViewState extends State<HomeLayoutView> {
     );
   }
 
-//   void showToast()=>Fluttertoast.showToast(
-// msg:"  Added Successfully  ",
-//     gravity:ToastGravity.TOP,
-//     toastLength: Toast.LENGTH_LONG
-//
-// //   );
+  DateTime selectedDate = DateUtils.dateOnly(DateTime.now());
+
+  void DatePicker() async {
+    DateTime? chosenDate = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 356)));
+    if (chosenDate == null) return;
+    setState(() {
+      selectedDate = DateUtils.dateOnly(chosenDate);
+    });
+  }
+
   void showToast() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
